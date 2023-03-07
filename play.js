@@ -1,0 +1,28 @@
+class Button {
+	constructor(description, el) {
+		this.el = el;
+		this.hue = description.hue;
+		this.sound = loadSound(description.file);
+		this.paint(25);
+	}
+
+	paint(level) {
+		const background = `hsl(${this.hue}, 100%, ${level}%)`;
+		this.el.style.backgroundColor = background;
+	}
+
+	async press(volume) {
+		this.paint(50);
+		await this.play(volume);
+		this.paint(25);
+	}
+
+	// Work around Safari's rule to only play sounds if given permission.
+	async play(volume = 1.0) {
+		this.sound.volume = volume;
+		await new Promise((resolve) => {
+			this.sound.onended = resolve;
+			this.sound.play();
+		});
+	}
+}
